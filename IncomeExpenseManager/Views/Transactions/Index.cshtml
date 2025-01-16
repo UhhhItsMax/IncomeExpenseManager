@@ -1,0 +1,39 @@
+﻿@model IEnumerable<IncomeExpenseManager.Models.TransactionBase>
+
+@{
+    ViewData["Title"] = "All Transactions";
+}
+
+<h1>All Transactions</h1>
+
+<p>
+    <!-- In the future, maybe I add sorting/filtering controls here. -->
+    <!-- e.g., a dropdown for "Income/Expense," date range pickers, etc. -->
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in Model)
+        {
+            // figure out which type it is
+            var typeName = transaction is IncomeExpenseManager.Models.Income
+            ? "Income"
+            : "Expense";
+
+            <tr>
+                <td>@typeName</td>
+                <td>@transaction.Name</td>
+                <td>@transaction.Amount</td>
+                <td>@transaction.Date.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>
