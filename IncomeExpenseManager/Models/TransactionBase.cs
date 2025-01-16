@@ -12,6 +12,7 @@ namespace IncomeExpenseManager.Models
         public string Name { get; set; }
 
         [Required]
+        [DisplayFormat(DataFormatString = "{0:F2}", ApplyFormatInEditMode = true)] // Ensure 2 decimals for display
         public decimal Amount { get; set; }
 
         [Required]

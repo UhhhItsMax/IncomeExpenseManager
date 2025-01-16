@@ -6,10 +6,32 @@
 
 <h1>All Transactions</h1>
 
-<p>
-    <!-- In the future, maybe I add sorting/filtering controls here. -->
-    <!-- e.g., a dropdown for "Income/Expense," date range pickers, etc. -->
-</p>
+<!-- Filtering/Sorting Form -->
+<form method="get" class="mb-3">
+    <!-- Type Filter Dropdown -->
+    <label for="typeFilter">Transaction Type:</label>
+    <select id="typeFilter" name="typeFilter">
+        <option value="">All</option>
+        <option value="Income">Income</option>
+        <option value="Expense">Expense</option>
+    </select>
+
+    <!-- Search String -->
+    <label for="searchString">Name Search:</label>
+    <input type="text" id="searchString" name="searchString" placeholder="Döner, etc." />
+
+    <!-- Sort Order -->
+    <label for="sortOrder">Sort by:</label>
+    <select id="sortOrder" name="sortOrder">
+        <option value="">(Default: Date Desc)</option>
+        <option value="date_asc">Date Ascending</option>
+        <option value="date_desc">Date Descending</option>
+        <option value="type_asc">Type Asc (Income first)</option>
+        <option value="type_desc">Type Desc (Expense first)</option>
+    </select>
+
+    <button type="submit">Apply</button>
+</form>
 
 <table class="table table-striped">
     <thead>
@@ -18,21 +40,41 @@
             <th>Name</th>
             <th>Amount</th>
             <th>Date</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var transaction in Model)
         {
-            // figure out which type it is
-            var typeName = transaction is IncomeExpenseManager.Models.Income
+            var isIncome = transaction is IncomeExpenseManager.Models.Income;
+            var typeName = isIncome
             ? "Income"
             : "Expense";
+            var controllerName = isIncome 
+            ? "Income" 
+            : "Expense";
+
 
             <tr>
                 <td>@typeName</td>
                 <td>@transaction.Name</td>
-                <td>@transaction.Amount</td>
+                <td>@transaction.Amount</td> <!--.ToString("0.00€") kannst ranhängen um das Format zu ändern z.B.-->
                 <td>@transaction.Date.ToShortDateString()</td>
+                <td>
+                    <!--
+                        These links will point to the correct controller
+                        based on whether it's Income or Expense, due to controllerName
+                    -->
+                    <a asp-controller="@controllerName"
+                       asp-action="Details"
+                       asp-route-id="@transaction.Id">Details</a> |
+                    <a asp-controller="@controllerName"
+                       asp-action="Edit"
+                       asp-route-id="@transaction.Id">Edit</a> |
+                    <a asp-controller="@controllerName"
+                       asp-action="Delete"
+                       asp-route-id="@transaction.Id">Delete</a>
+                </td>
             </tr>
         }
     </tbody>

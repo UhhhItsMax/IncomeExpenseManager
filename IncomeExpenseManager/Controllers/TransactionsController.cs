@@ -18,7 +18,10 @@ namespace IncomeExpenseManager.Controllers
         }
 
         // GET: Transactions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string typeFilter,
+            string sortOrder,
+            string searchString)
         {
             // Fetch incomes and expenses
             var incomes = await _context.Incomes.ToListAsync();
@@ -29,10 +32,66 @@ namespace IncomeExpenseManager.Controllers
             allTransactions.AddRange(incomes);
             allTransactions.AddRange(expenses);
 
-            // Sort them by date descending, for instance
-            allTransactions = allTransactions
-                .OrderByDescending(t => t.Date)
-                .ToList();
+            if (!string.IsNullOrEmpty(typeFilter))
+            {
+                if (typeFilter == "Income")
+                {
+                    allTransactions = allTransactions
+                        .Where(t => t is Income)
+                        .ToList();
+                }
+                else if (typeFilter == "Expense")
+                {
+                    allTransactions = allTransactions
+                        .Where(t => t is Expense)
+                        .ToList();
+                }
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                allTransactions = allTransactions
+                    .Where(t => t.Name.Contains(searchString, System.StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            switch (sortOrder)
+            {
+                case "date_asc":
+                    allTransactions = allTransactions
+                        .OrderBy(t => t.Date)
+                        .ToList();
+                    break;
+
+                case "date_desc":
+                    allTransactions = allTransactions
+                        .OrderByDescending(t => t.Date)
+                        .ToList();
+                    break;
+
+                case "type_asc":    // Income First
+                    allTransactions = allTransactions
+                        .OrderBy(t => t is Expense)
+                        .ThenByDescending(t => t.Date)
+                        .ToList();
+                    break;
+
+                case "type_desc":   // Expense First
+                    allTransactions = allTransactions
+                        .OrderBy(t => t is Income)
+                        .ThenByDescending(t => t.Date)
+                        .ToList();
+                    break;
+
+                default:
+                    allTransactions = allTransactions
+                        .OrderByDescending(t => t.Date)
+                        .ToList();
+                    break;
+            }
+
+            decimal totalBalance = 0;
+
 
             return View(allTransactions);
         }
