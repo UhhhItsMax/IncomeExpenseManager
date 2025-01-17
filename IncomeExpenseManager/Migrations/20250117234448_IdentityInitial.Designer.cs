@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IncomeExpenseManager.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    [Migration("20250117225705_InitialIdentity")]
-    partial class InitialIdentity
+    [Migration("20250117234448_IdentityInitial")]
+    partial class IdentityInitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

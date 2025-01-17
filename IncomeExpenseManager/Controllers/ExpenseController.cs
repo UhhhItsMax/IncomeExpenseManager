@@ -9,9 +9,11 @@ using IncomeExpenseManager.Data;
 using IncomeExpenseManager.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IncomeExpenseManager.Controllers
 {
+    [Authorize]
     public class ExpenseController : Controller
     {
         private readonly ApplicationDbContext _domainContext;
@@ -72,7 +74,7 @@ namespace IncomeExpenseManager.Controllers
                 _domainContext.Add(expense);
                 await _domainContext.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Income created successfully!";
+                TempData["SuccessMessage"] = "Expense created successfully!";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -127,6 +129,9 @@ namespace IncomeExpenseManager.Controllers
                     existing.Name = expense.Name;
                     existing.Amount = expense.Amount;
                     existing.Date = expense.Date;
+                    existing.Vendor = expense.Vendor;
+                    existing.Description = expense.Description;
+                    existing.IsRecurring = expense.IsRecurring;
                     _domainContext.Update(existing);
                     await _domainContext.SaveChangesAsync();
                 }
