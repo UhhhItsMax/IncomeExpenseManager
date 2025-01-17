@@ -6,6 +6,12 @@
 
 <h1>All Transactions</h1>
 
+<p>
+    <!-- Optional: Links to create new Income or Expense -->
+    <a asp-controller="Income" asp-action="Create" class="btn btn-primary">Add Income</a>
+    <a asp-controller="Expense" asp-action="Create" class="btn btn-primary">Add Expense</a>
+</p>
+
 <!-- Filtering/Sorting Form -->
 <form method="get" class="mb-3">
     <!-- Type Filter Dropdown -->
@@ -32,50 +38,57 @@
 
     <button type="submit">Apply</button>
 </form>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Type</th>
-            <th>Name</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var transaction in Model)
-        {
-            var isIncome = transaction is IncomeExpenseManager.Models.Income;
-            var typeName = isIncome
-            ? "Income"
-            : "Expense";
-            var controllerName = isIncome 
-            ? "Income" 
-            : "Expense";
-
-
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@typeName</td>
-                <td>@transaction.Name</td>
-                <td>@transaction.Amount</td> <!--.ToString("0.00€") kannst ranhängen um das Format zu ändern z.B.-->
-                <td>@transaction.Date.ToShortDateString()</td>
-                <td>
-                    <!--
-                        These links will point to the correct controller
-                        based on whether it's Income or Expense, due to controllerName
-                    -->
-                    <a asp-controller="@controllerName"
-                       asp-action="Details"
-                       asp-route-id="@transaction.Id">Details</a> |
-                    <a asp-controller="@controllerName"
-                       asp-action="Edit"
-                       asp-route-id="@transaction.Id">Edit</a> |
-                    <a asp-controller="@controllerName"
-                       asp-action="Delete"
-                       asp-route-id="@transaction.Id">Delete</a>
-                </td>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var transaction in Model)
+            {
+                var isIncome = transaction is IncomeExpenseManager.Models.Income;
+                var typeName = isIncome
+                ? "Income"
+                : "Expense";
+                var controllerName = isIncome
+                ? "Income"
+                : "Expense";
+
+
+                <tr>
+                    <td>@typeName</td>
+                    <td>@transaction.Name</td>
+                    <td>@transaction.Amount</td> <!--.ToString("0.00€") kannst ranhängen um das Format zu ändern z.B.-->
+                    <td>@transaction.Date.ToShortDateString()</td>
+                    <td>
+                        <!--
+                            These links will point to the correct controller
+                            based on whether it's Income or Expense, due to controllerName
+                        -->
+                        <a asp-controller="@controllerName"
+                           asp-action="Details"
+                           asp-route-id="@transaction.Id">Details</a> |
+                        <a asp-controller="@controllerName"
+                           asp-action="Edit"
+                           asp-route-id="@transaction.Id">Edit</a> |
+                        <a asp-controller="@controllerName"
+                           asp-action="Delete"
+                           asp-route-id="@transaction.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+	<p>You have no transactions yet.</p>
+}
+

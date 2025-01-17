@@ -71,6 +71,9 @@ namespace IncomeExpenseManager.Controllers
                 expense.UserId = _userManager.GetUserId(User);
                 _domainContext.Add(expense);
                 await _domainContext.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Income created successfully!";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(expense);
@@ -79,6 +82,7 @@ namespace IncomeExpenseManager.Controllers
         // GET: Expense/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+
             if (id == null)
             {
                 return NotFound();
@@ -91,6 +95,7 @@ namespace IncomeExpenseManager.Controllers
             {
                 return NotFound();
             }
+
             return View(expense);
         }
 

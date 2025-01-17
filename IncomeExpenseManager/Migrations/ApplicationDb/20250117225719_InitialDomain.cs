@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace IncomeExpenseManager.Migrations.ApplicationDb
 {
     /// <inheritdoc />
-    public partial class DomainInitial : Migration
+    public partial class InitialDomain : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

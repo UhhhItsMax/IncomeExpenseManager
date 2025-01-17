@@ -2,19 +2,21 @@
 using IncomeExpenseManager.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+
+
 
 namespace IncomeExpenseManager.Controllers
 {
     public class TransactionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public TransactionsController(ApplicationDbContext context)
+        public TransactionsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Transactions
@@ -23,9 +25,16 @@ namespace IncomeExpenseManager.Controllers
             string sortOrder,
             string searchString)
         {
+            // Getr the current user's ID
+            var userId = _userManager.GetUserId(User);
+
             // Fetch incomes and expenses
-            var incomes = await _context.Incomes.ToListAsync();
-            var expenses = await _context.Expenses.ToListAsync();
+            var incomes = await _context
+                .Incomes
+                .ToListAsync();
+            var expenses = await _context
+                .Expenses
+                .ToListAsync();
 
             // Combine them into a single list of TransactionBase
             var allTransactions = new List<TransactionBase>();

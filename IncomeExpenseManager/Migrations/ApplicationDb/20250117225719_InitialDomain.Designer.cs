@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IncomeExpenseManager.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250117221613_DomainInitial")]
-    partial class DomainInitial
+    [Migration("20250117225719_InitialDomain")]
+    partial class InitialDomain
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
