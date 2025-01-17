@@ -7,22 +7,31 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using IncomeExpenseManager.Data;
 using IncomeExpenseManager.Models;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 
 namespace IncomeExpenseManager.Controllers
 {
     public class ExpenseController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _domainContext;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ExpenseController(ApplicationDbContext context)
+        public ExpenseController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager)
         {
-            _context = context;
+
+            _domainContext = domainContext;
+            _userManager = userManager;
         }
 
         // GET: Expense
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Expenses.ToListAsync());
+            var userId = _userManager.GetUserId(User);
+            var expenses = await _domainContext.Expenses
+                .Where(i => i.UserId == userId)
+                .ToListAsync();
+            return View(expenses);
         }
 
         // GET: Expense/Details/5
@@ -33,8 +42,9 @@ namespace IncomeExpenseManager.Controllers
                 return NotFound();
             }
 
-            var expense = await _context.Expenses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var userId = _userManager.GetUserId(User);
+            var expense = await _domainContext.Expenses
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
             if (expense == null)
             {
                 return NotFound();
@@ -58,8 +68,9 @@ namespace IncomeExpenseManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(expense);
-                await _context.SaveChangesAsync();
+                expense.UserId = _userManager.GetUserId(User);
+                _domainContext.Add(expense);
+                await _domainContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(expense);
@@ -73,7 +84,9 @@ namespace IncomeExpenseManager.Controllers
                 return NotFound();
             }
 
-            var expense = await _context.Expenses.FindAsync(id);
+            var userId = _userManager.GetUserId(User);
+            var expense = await _domainContext.Expenses
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
             if (expense == null)
             {
                 return NotFound();
@@ -93,12 +106,24 @@ namespace IncomeExpenseManager.Controllers
                 return NotFound();
             }
 
+            var userId = _userManager.GetUserId(User);
+
+            var existing = await _domainContext.Expenses
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
+
+            if(existing == null) {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(expense);
-                    await _context.SaveChangesAsync();
+                    existing.Name = expense.Name;
+                    existing.Amount = expense.Amount;
+                    existing.Date = expense.Date;
+                    _domainContext.Update(existing);
+                    await _domainContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,9 +148,10 @@ namespace IncomeExpenseManager.Controllers
             {
                 return NotFound();
             }
-
-            var expense = await _context.Expenses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            
+            var userId = _userManager.GetUserId(User);
+            var expense = await _domainContext.Expenses
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
             if (expense == null)
             {
                 return NotFound();
@@ -139,19 +165,21 @@ namespace IncomeExpenseManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var expense = await _context.Expenses.FindAsync(id);
+            var userId = _userManager.GetUserId(User);
+            var expense = await _domainContext.Expenses
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
             if (expense != null)
             {
-                _context.Expenses.Remove(expense);
+                _domainContext.Expenses.Remove(expense);
+                await _domainContext.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ExpenseExists(int id)
         {
-            return _context.Expenses.Any(e => e.Id == id);
+            return _domainContext.Expenses.Any(e => e.Id == id);
         }
     }
 }

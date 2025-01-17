@@ -7,22 +7,29 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using IncomeExpenseManager.Data;
 using IncomeExpenseManager.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace IncomeExpenseManager.Controllers
 {
     public class IncomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _domainContext;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public IncomeController(ApplicationDbContext context)
+        public IncomeController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager)
         {
-            _context = context;
+            _domainContext = domainContext;
+            _userManager = userManager;
         }
 
         // GET: Income
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Incomes.ToListAsync());
+            var userId = _userManager.GetUserId(User);
+            var incomes = await _domainContext.Incomes
+                .Where(i => i.UserId == userId)
+                .ToListAsync();
+            return View(incomes);
         }
 
         // GET: Income/Details/5
@@ -33,8 +40,9 @@ namespace IncomeExpenseManager.Controllers
                 return NotFound();
             }
 
-            var income = await _context.Incomes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var userId = _userManager.GetUserId(User);
+            var income = await _domainContext.Incomes
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
             if (income == null)
             {
                 return NotFound();
@@ -58,8 +66,9 @@ namespace IncomeExpenseManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(income);
-                await _context.SaveChangesAsync();
+                income.UserId = _userManager.GetUserId(User);
+                _domainContext.Add(income);
+                await _domainContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(income);
@@ -73,7 +82,9 @@ namespace IncomeExpenseManager.Controllers
                 return NotFound();
             }
 
-            var income = await _context.Incomes.FindAsync(id);
+            var userId = _userManager.GetUserId(User);
+            var income = await _domainContext.Incomes
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
             if (income == null)
             {
                 return NotFound();
@@ -93,12 +104,25 @@ namespace IncomeExpenseManager.Controllers
                 return NotFound();
             }
 
+            var userId = _userManager.GetUserId(User);
+
+            var existing = await _domainContext.Incomes
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
+
+            if (existing == null) {
+                return NotFound();
+            }
+
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(income);
-                    await _context.SaveChangesAsync();
+                    existing.Name = income.Name;
+                    existing.Amount = income.Amount;
+                    existing.Date = income.Date;
+                    _domainContext.Update(existing);
+                    await _domainContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,8 +148,9 @@ namespace IncomeExpenseManager.Controllers
                 return NotFound();
             }
 
-            var income = await _context.Incomes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var userId = _userManager.GetUserId(User);
+            var income = await _domainContext.Incomes
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
             if (income == null)
             {
                 return NotFound();
@@ -139,19 +164,21 @@ namespace IncomeExpenseManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var income = await _context.Incomes.FindAsync(id);
+            var userId = _userManager.GetUserId(User);
+            var income = await _domainContext.Incomes
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
             if (income != null)
             {
-                _context.Incomes.Remove(income);
+                _domainContext.Incomes.Remove(income);
+                await _domainContext.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool IncomeExists(int id)
         {
-            return _context.Incomes.Any(e => e.Id == id);
+            return _domainContext.Incomes.Any(e => e.Id == id);
         }
     }
 }

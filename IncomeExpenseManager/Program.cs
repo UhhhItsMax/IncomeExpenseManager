@@ -5,17 +5,21 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Configuration.GetConnectionString("IdentityConnection")));
 
-builder.Services.AddDefaultIdentity<IdentityUser>()
-    .AddEntityFrameworkStores<AppIdentityDbContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    // Configure password or lockout settings
+    options.Password.RequireDigit = false;
+    options.Password.RequireUppercase = false;
+})
+.AddEntityFrameworkStores<AppIdentityDbContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace IncomeExpenseManager.Migrations.ApplicationDb
 {
     /// <inheritdoc />
-    public partial class InitialApp : Migration
+    public partial class DomainInitial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,7 +22,8 @@ namespace IncomeExpenseManager.Migrations.ApplicationDb
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsRecurring = table.Column<bool>(type: "bit", nullable: false)
+                    IsRecurring = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,7 +41,8 @@ namespace IncomeExpenseManager.Migrations.ApplicationDb
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsRecurring = table.Column<bool>(type: "bit", nullable: false)
+                    IsRecurring = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

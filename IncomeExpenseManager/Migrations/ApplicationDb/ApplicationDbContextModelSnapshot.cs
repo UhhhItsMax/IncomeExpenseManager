@@ -48,6 +48,10 @@ namespace IncomeExpenseManager.Migrations.ApplicationDb
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Vendor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -84,6 +88,10 @@ namespace IncomeExpenseManager.Migrations.ApplicationDb
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

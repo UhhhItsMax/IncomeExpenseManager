@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IncomeExpenseManager.Models
 {
@@ -21,6 +23,9 @@ namespace IncomeExpenseManager.Models
 
         public string Description { get; set; }
         public bool IsRecurring { get; set; }
+
+        [Required]
+        public string UserId { get; set; }
 
     }
 }

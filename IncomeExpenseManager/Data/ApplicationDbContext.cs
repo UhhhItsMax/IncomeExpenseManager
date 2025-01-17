@@ -27,6 +27,7 @@ namespace IncomeExpenseManager.Data
             modelBuilder.Entity<Expense>()
                 .ToTable("Expenses")
                 .HasBaseType((Type)null);
+
         }
     }
 }
