@@ -49,7 +49,6 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Vendor")
@@ -92,7 +91,6 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

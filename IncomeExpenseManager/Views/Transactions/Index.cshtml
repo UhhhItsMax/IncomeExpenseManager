@@ -1,10 +1,10 @@
-﻿@model IEnumerable<IncomeExpenseManager.Models.TransactionBase>
+﻿@model IncomeExpenseManager.ViewModels.TransactionsViewModel
 
 @{
     ViewData["Title"] = "All Transactions";
 }
 
-
+<h2>Total Balance: @Model.TotalBalance</h2>
 <h1>All Transactions</h1>
 
 <p>
@@ -39,7 +39,7 @@
 
     <button type="submit">Apply</button>
 </form>
-@if (Model != null && Model.Any())
+@if (Model != null && Model.Transactions != null && Model.Transactions.Any())
 {
     <table class="table table-striped">
         <thead>
@@ -52,7 +52,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var transaction in Model)
+            @foreach (var transaction in Model.Transactions)
             {
                 var isIncome = transaction is IncomeExpenseManager.Models.Income;
                 var typeName = isIncome

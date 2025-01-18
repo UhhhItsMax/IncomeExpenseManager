@@ -9,6 +9,8 @@ using IncomeExpenseManager.Data;
 using IncomeExpenseManager.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace IncomeExpenseManager.Controllers
 {
@@ -18,11 +20,13 @@ namespace IncomeExpenseManager.Controllers
     {
         private readonly ApplicationDbContext _domainContext;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ILogger<ExpenseController> _logger;
 
-        public IncomeController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager)
+        public IncomeController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager, ILogger<ExpenseController> logger)
         {
             _domainContext = domainContext;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: Income
@@ -76,6 +80,13 @@ namespace IncomeExpenseManager.Controllers
                 TempData["SuccessMessage"] = "Income created successfully!";
 
                 return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    _logger.LogError($"ModelState Error: {error.ErrorMessage}");
+                }
             }
             return View(income);
         }

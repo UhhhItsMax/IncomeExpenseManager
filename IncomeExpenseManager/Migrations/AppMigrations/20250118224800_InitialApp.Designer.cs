@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IncomeExpenseManager.Migrations.AppMigrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250118005339_InitialApp")]
+    [Migration("20250118224800_InitialApp")]
     partial class InitialApp
     {
         /// <inheritdoc />
@@ -52,7 +52,6 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Vendor")
@@ -95,7 +94,6 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
