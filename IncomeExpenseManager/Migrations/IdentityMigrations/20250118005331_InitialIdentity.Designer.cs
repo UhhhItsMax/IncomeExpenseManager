@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace IncomeExpenseManager.Migrations
+namespace IncomeExpenseManager.Migrations.IdentityMigrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    [Migration("20250117234448_IdentityInitial")]
-    partial class IdentityInitial
+    [Migration("20250118005331_InitialIdentity")]
+    partial class InitialIdentity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

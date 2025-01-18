@@ -24,7 +24,6 @@ namespace IncomeExpenseManager.Models
         public string Description { get; set; }
         public bool IsRecurring { get; set; }
 
-        [Required]
         public string UserId { get; set; }
 
     }

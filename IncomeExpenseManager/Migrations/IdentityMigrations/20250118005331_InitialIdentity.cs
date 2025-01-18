@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace IncomeExpenseManager.Migrations
+namespace IncomeExpenseManager.Migrations.IdentityMigrations
 {
     /// <inheritdoc />
-    public partial class IdentityInitial : Migration
+    public partial class InitialIdentity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

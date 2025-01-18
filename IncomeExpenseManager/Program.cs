@@ -1,9 +1,17 @@
 using IncomeExpenseManager.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
@@ -19,7 +27,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.Password.RequireDigit = false;
     options.Password.RequireUppercase = false;
 })
-.AddEntityFrameworkStores<AppIdentityDbContext>();
+    .AddEntityFrameworkStores<AppIdentityDbContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

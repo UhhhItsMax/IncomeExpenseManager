@@ -10,6 +10,7 @@ using IncomeExpenseManager.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace IncomeExpenseManager.Controllers
 {
@@ -18,12 +19,15 @@ namespace IncomeExpenseManager.Controllers
     {
         private readonly ApplicationDbContext _domainContext;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ILogger<ExpenseController> _logger;
 
-        public ExpenseController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager)
+
+        public ExpenseController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager, ILogger<ExpenseController> logger)
         {
 
             _domainContext = domainContext;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: Expense
@@ -68,15 +72,32 @@ namespace IncomeExpenseManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Vendor,Id,Name,Amount,Date,Description,IsRecurring")] Expense expense)
         {
+            _logger.LogInformation($"IsAuthenticated: {User.Identity.IsAuthenticated}");
+            _logger.LogInformation($"UserId: {_userManager.GetUserId(User)}");
+
+
+            expense.UserId = _userManager.GetUserId(User);
+            _logger.LogInformation($"Expense.UserId: {expense.UserId}");
+
+
             if (ModelState.IsValid)
             {
-                expense.UserId = _userManager.GetUserId(User);
                 _domainContext.Add(expense);
                 await _domainContext.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Expense created successfully!";
-
+                _logger.LogError($"ModelState Error: {"DUMME PISSE"}");
                 return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                Console.WriteLine("BEHINDERT"); // or log it
+                // Debug: see what the errors are
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    _logger.LogError($"ModelState Error: {error.ErrorMessage}");
+                }
+                _logger.LogError($"ModelState Error: {"ALLES DUMM!"}");
             }
             return View(expense);
         }
