@@ -8,48 +8,32 @@ using Microsoft.EntityFrameworkCore;
 using IncomeExpenseManager.Data;
 using IncomeExpenseManager.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
 
 namespace IncomeExpenseManager.Controllers
 {
-    [Authorize]
-
-    public class IncomeController : Controller
+    public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _domainContext;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly ILogger<ExpenseController> _logger;
 
-        public IncomeController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager, ILogger<ExpenseController> logger)
+
+        public CategoriesController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager)
         {
             _domainContext = domainContext;
             _userManager = userManager;
-            _logger = logger;
         }
 
-        private async Task PopulateCategoriesAsync()
-        {
-            var userId = _userManager.GetUserId(User);
-            var categories = await _domainContext.Categories
-                .Where(c => c.UserId == userId)
-                .ToListAsync();
-
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");
-        }
-
-        // GET: Income
+        // GET: Categories
         public async Task<IActionResult> Index()
         {
             var userId = _userManager.GetUserId(User);
-            var incomes = await _domainContext.Incomes
+            var categories = await _domainContext.Categories
                 .Where(i => i.UserId == userId)
                 .ToListAsync();
-            return View(incomes);
+            return View(categories);
         }
 
-        // GET: Income/Details/5
+        // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -58,52 +42,42 @@ namespace IncomeExpenseManager.Controllers
             }
 
             var userId = _userManager.GetUserId(User);
-            var income = await _domainContext.Incomes
+            var category = await _domainContext.Categories
                 .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
-            if (income == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(income);
+            return View(category);
         }
 
-        // GET: Income/Create
-        public async Task<IActionResult> Create()
+        // GET: Categories/Create
+        public IActionResult Create()
         {
-            await PopulateCategoriesAsync();
             return View();
         }
 
-        // POST: Income/Create
+        // POST: Categories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Source,Id,Name,Amount,Date,Description,IsRecurring")] Income income)
+        public async Task<IActionResult> Create([Bind("Id,Name,UserId")] Category category)
         {
             if (ModelState.IsValid)
             {
-                income.UserId = _userManager.GetUserId(User);
-                _domainContext.Add(income);
+                category.UserId = _userManager.GetUserId(User);
+                _domainContext.Add(category);
                 await _domainContext.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Income created successfully!";
-
+                TempData["SuccessMessage"] = "Category created successfully!";
                 return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    _logger.LogError($"ModelState Error: {error.ErrorMessage}");
-                }
-            }
-            await PopulateCategoriesAsync();
-            return View(income);
+            return View(category);
         }
 
-        // GET: Income/Edit/5
+        // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -112,54 +86,43 @@ namespace IncomeExpenseManager.Controllers
             }
 
             var userId = _userManager.GetUserId(User);
-            var income = await _domainContext.Incomes
+            var category = await _domainContext.Categories
                 .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
-            if (income == null)
+            if (category == null)
             {
                 return NotFound();
             }
-            await PopulateCategoriesAsync();
-            return View(income);
+            return View(category);
         }
 
-        // POST: Income/Edit/5
+        // POST: Categories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Source,Id,Name,Amount,Date,Description,IsRecurring")] Income income)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,UserId")] Category category)
         {
-            if (id != income.Id)
+            if (id != category.Id)
             {
                 return NotFound();
             }
 
             var userId = _userManager.GetUserId(User);
 
-            var existing = await _domainContext.Incomes
+            var existing = await _domainContext.Categories
                 .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
-
-            if (existing == null) {
-                return NotFound();
-            }
-
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    existing.Name = income.Name;
-                    existing.Amount = income.Amount;
-                    existing.Date = income.Date;
-                    existing.Description = income.Description;
-                    existing.IsRecurring = income.IsRecurring;
-                    existing.Source = income.Source;
-                    _domainContext.Update(existing);
+                    existing.Name = category.Name;
+                    _domainContext.Update(category);
                     await _domainContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!IncomeExists(income.Id))
+                    if (!CategoryExists(category.Id))
                     {
                         return NotFound();
                     }
@@ -170,11 +133,10 @@ namespace IncomeExpenseManager.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            await PopulateCategoriesAsync();
-            return View(income);
+            return View(category);
         }
 
-        // GET: Income/Delete/5
+        // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -183,36 +145,35 @@ namespace IncomeExpenseManager.Controllers
             }
 
             var userId = _userManager.GetUserId(User);
-            var income = await _domainContext.Incomes
+            var category = await _domainContext.Categories
                 .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
-            if (income == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(income);
+            return View(category);
         }
 
-        // POST: Income/Delete/5
+        // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var userId = _userManager.GetUserId(User);
-            var income = await _domainContext.Incomes
-                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
-            if (income != null)
+            var category = await _domainContext.Categories.FindAsync(id);
+            if (category != null)
             {
-                _domainContext.Incomes.Remove(income);
-                await _domainContext.SaveChangesAsync();
+                _domainContext.Categories.Remove(category);
             }
 
+            await _domainContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool IncomeExists(int id)
+        private bool CategoryExists(int id)
         {
-            return _domainContext.Incomes.Any(e => e.Id == id);
+            return _domainContext.Categories.Any(i => i.Id == id);
         }
     }
 }

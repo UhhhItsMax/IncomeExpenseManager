@@ -30,6 +30,16 @@ namespace IncomeExpenseManager.Controllers
             _logger = logger;
         }
 
+        private async Task PopulateCategoriesAsync()
+        {
+            var userId = _userManager.GetUserId(User);
+            var categories = await _domainContext.Categories
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");
+        }
+
         // GET: Expense
         public async Task<IActionResult> Index()
         {
@@ -60,8 +70,9 @@ namespace IncomeExpenseManager.Controllers
         }
 
         // GET: Expense/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            await PopulateCategoriesAsync();
             return View();
         }
 
@@ -90,6 +101,7 @@ namespace IncomeExpenseManager.Controllers
                     _logger.LogError($"ModelState Error: {error.ErrorMessage}");
                 }
             }
+            await PopulateCategoriesAsync();
             return View(expense);
         }
 
@@ -109,7 +121,7 @@ namespace IncomeExpenseManager.Controllers
             {
                 return NotFound();
             }
-
+            await PopulateCategoriesAsync();
             return View(expense);
         }
 
@@ -160,6 +172,7 @@ namespace IncomeExpenseManager.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            await PopulateCategoriesAsync();
             return View(expense);
         }
 

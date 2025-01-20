@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IncomeExpenseManager.Migrations.IdentityMigrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    [Migration("20250120221641_InitialIdentity")]
+    [Migration("20250120232328_InitialIdentity")]
     partial class InitialIdentity
     {
         /// <inheritdoc />

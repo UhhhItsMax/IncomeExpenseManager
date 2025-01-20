@@ -15,6 +15,7 @@ namespace IncomeExpenseManager.Data
 
         public DbSet<Income> Incomes { get; set; }
         public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +27,10 @@ namespace IncomeExpenseManager.Data
 
             modelBuilder.Entity<Expense>()
                 .ToTable("Expenses")
+                .HasBaseType((Type)null);
+
+            modelBuilder.Entity<Category>()
+                .ToTable("Categories")
                 .HasBaseType((Type)null);
 
         }

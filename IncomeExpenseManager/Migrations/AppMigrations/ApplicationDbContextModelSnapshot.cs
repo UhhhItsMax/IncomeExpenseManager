@@ -22,6 +22,27 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("IncomeExpenseManager.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories", (string)null);
+                });
+
             modelBuilder.Entity("IncomeExpenseManager.Models.Expense", b =>
                 {
                     b.Property<int>("Id")
@@ -32,6 +53,9 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -57,6 +81,8 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Expenses", (string)null);
                 });
 
@@ -70,6 +96,9 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -95,7 +124,27 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Incomes", (string)null);
+                });
+
+            modelBuilder.Entity("IncomeExpenseManager.Models.Expense", b =>
+                {
+                    b.HasOne("IncomeExpenseManager.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("IncomeExpenseManager.Models.Income", b =>
+                {
+                    b.HasOne("IncomeExpenseManager.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
+                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }

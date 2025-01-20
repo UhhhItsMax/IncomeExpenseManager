@@ -25,5 +25,11 @@ namespace IncomeExpenseManager.Models
         public bool IsRecurring { get; set; }
 
         public string? UserId { get; set; }
+
+        public int? CategoryId { get; set; }
+
+        [ForeignKey("CategoryId")]
+        public Category? Category { get; set; }
+
     }
 }
