@@ -46,6 +46,7 @@ namespace IncomeExpenseManager.Controllers
             var incomes = await _domainContext.Incomes
                 .Where(i => i.UserId == userId)
                 .ToListAsync();
+            await PopulateCategoriesAsync();
             return View(incomes);
         }
 
@@ -64,7 +65,7 @@ namespace IncomeExpenseManager.Controllers
             {
                 return NotFound();
             }
-
+            await PopulateCategoriesAsync();
             return View(income);
         }
 
@@ -80,7 +81,7 @@ namespace IncomeExpenseManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Source,Id,Name,Amount,Date,Description,IsRecurring")] Income income)
+        public async Task<IActionResult> Create([Bind("Source,Id,Name,Amount,Date,Description,IsRecurring,CategoryId")] Income income)
         {
             if (ModelState.IsValid)
             {
@@ -127,7 +128,7 @@ namespace IncomeExpenseManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Source,Id,Name,Amount,Date,Description,IsRecurring")] Income income)
+        public async Task<IActionResult> Edit(int id, [Bind("Source,Id,Name,Amount,Date,Description,IsRecurring,CategoryId")] Income income)
         {
             if (id != income.Id)
             {
@@ -189,7 +190,7 @@ namespace IncomeExpenseManager.Controllers
             {
                 return NotFound();
             }
-
+            await PopulateCategoriesAsync();
             return View(income);
         }
 
