@@ -29,101 +29,57 @@ namespace IncomeExpenseManager.Controllers
             // Getr the current user's ID
             var userId = _userManager.GetUserId(User);
 
-            // Fetch incomes and expenses
-            var incomes = await _domainContext.Incomes
-                .Where(i => i.UserId == userId)
-                .ToListAsync();
-            var expenses = await _domainContext.Expenses
-                .Where(i => i.UserId == userId)
-                .ToListAsync();
-
-            // Combine them into a single list of TransactionBase
-            var allTransactions = new List<TransactionBase>();
-            allTransactions.AddRange(incomes);
-            allTransactions.AddRange(expenses);
+            var transactionsQuery = _domainContext.Transactions
+                .Include(t => t.Category)
+                .Where(t => t.UserId == userId)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(typeFilter))
             {
                 if (typeFilter == "Income")
                 {
-                    allTransactions = allTransactions
-                        .Where(t => t is Income)
-                        .ToList();
+                    transactionsQuery = transactionsQuery.OfType<Income>();
                 }
                 else if (typeFilter == "Expense")
                 {
-                    allTransactions = allTransactions
-                        .Where(t => t is Expense)
-                        .ToList();
+                    transactionsQuery = transactionsQuery.OfType<Expense>();
                 }
             }
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                allTransactions = allTransactions
-                    .Where(t => t.Name.Contains(searchString, System.StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                transactionsQuery = transactionsQuery
+                    .Where(t => t.Name.Contains(searchString, System.StringComparison.OrdinalIgnoreCase));
             }
 
-            switch (sortOrder)
+            transactionsQuery = sortOrder switch
             {
-                case "date_asc":
-                    allTransactions = allTransactions
-                        .OrderBy(t => t.Date)
-                        .ToList();
-                    break;
+                "date_asc" => transactionsQuery
+                    .OrderBy(t => t.Date),
+                "date_desc" => transactionsQuery
+                    .OrderByDescending(t => t.Date),
+                "type_asc" => transactionsQuery
+                    .OrderBy(t => t is Expense)
+                    .ThenByDescending(t => t.Date),
+                "type_desc" => transactionsQuery
+                    .OrderBy(t => t is Income)
+                    .ThenByDescending(t => t.Date),
+                _ => transactionsQuery
+                    .OrderByDescending(t => t.Date)
+            };
 
-                case "date_desc":
-                    allTransactions = allTransactions
-                        .OrderByDescending(t => t.Date)
-                        .ToList();
-                    break;
+            var transactions = await transactionsQuery.ToListAsync();
 
-                case "type_asc":    // Income First
-                    allTransactions = allTransactions
-                        .OrderBy(t => t is Expense)
-                        .ThenByDescending(t => t.Date)
-                        .ToList();
-                    break;
-
-                case "type_desc":   // Expense First
-                    allTransactions = allTransactions
-                        .OrderBy(t => t is Income)
-                        .ThenByDescending(t => t.Date)
-                        .ToList();
-                    break;
-
-                default:
-                    allTransactions = allTransactions
-                        .OrderByDescending(t => t.Date)
-                        .ToList();
-                    break;
-            }
-
-            decimal totalIncome = 0;
-            decimal totalExpense = 0;
-
-            foreach (var transaction in allTransactions)
-            {
-                if (transaction is Income)
-                {
-                    totalIncome += transaction.Amount;
-                }
-                else if (transaction is Expense)
-                {
-                    totalExpense += transaction.Amount;
-                }
-            }
-
+            decimal totalIncome = transactions.OfType<Income>().Sum(i => i.Amount);
+            decimal totalExpense = transactions.OfType<Expense>().Sum(e => e.Amount);
             decimal totalBalance = totalIncome - totalExpense;
-
 
             var viewModel = new TransactionsViewModel
             {
-                Transactions = allTransactions,
+                Transactions = transactions,
                 TotalIncome = totalIncome,
                 TotalExpense = totalExpense,
-                TotalBalance = totalIncome - totalExpense
+                TotalBalance = totalBalance
             };
 
 

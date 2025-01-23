@@ -8,9 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using IncomeExpenseManager.Data;
 using IncomeExpenseManager.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using IncomeExpenseManager.ViewModels;
 
 namespace IncomeExpenseManager.Controllers
 {
+    [Authorize]
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _domainContext;
@@ -63,18 +66,31 @@ namespace IncomeExpenseManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,UserId")] Category category)
+        public async Task<IActionResult> Create(CreateCategoryViewModel model)
         {
             if (ModelState.IsValid)
             {
-                category.UserId = _userManager.GetUserId(User);
+                var userId = _userManager.GetUserId(User);
+                if (userId == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Benutzer ist nicht authentifiziert.");
+                    return View(model);
+                }
+
+                var category = new Category
+                {
+                    Name = model.Name,
+                    UserId = userId
+                };
+
                 _domainContext.Add(category);
                 await _domainContext.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Category created successfully!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+
+            return View(model);
         }
 
         // GET: Categories/Edit/5
@@ -100,7 +116,7 @@ namespace IncomeExpenseManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,UserId")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("Name")] Category category)
         {
             if (id != category.Id)
             {

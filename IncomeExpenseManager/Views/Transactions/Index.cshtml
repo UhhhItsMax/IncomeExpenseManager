@@ -48,6 +48,7 @@
                 <th>Name</th>
                 <th>Amount</th>
                 <th>Date</th>
+                <th>Category</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -68,6 +69,7 @@
                     <td>@transaction.Name</td>
                     <td>@transaction.Amount</td> <!--.ToString("0.00€") kannst ranhängen um das Format zu ändern z.B.-->
                     <td>@transaction.Date.ToShortDateString()</td>
+                    <td>@(transaction.Category?.Name ?? "Uncategorized")</td>
                     <td>
                         <!--
                             These links will point to the correct controller

@@ -1,7 +1,9 @@
 ﻿using IncomeExpenseManager.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace IncomeExpenseManager.Data
@@ -13,25 +15,34 @@ namespace IncomeExpenseManager.Data
         {
         }
 
+        public DbSet<TransactionBase> Transactions { get; set; }
         public DbSet<Income> Incomes { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<CategoryVariable> CategoryVariables { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Income>()
-                .ToTable("Incomes")
-                .HasBaseType((Type)null);
+            modelBuilder.Entity<TransactionBase>()
+                .ToTable("Transactions")
+                .HasDiscriminator<string>("TransactionType")
+                .HasValue<Income>("Income")
+                .HasValue<Expense>("Expense");
 
-            modelBuilder.Entity<Expense>()
-                .ToTable("Expenses")
-                .HasBaseType((Type)null);
+            modelBuilder.Entity<TransactionBase>()
+                .HasOne(t => t.Category)
+                .WithMany(c => c.Transactions)
+                .HasForeignKey(t => t.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<Category>()
-                .ToTable("Categories")
-                .HasBaseType((Type)null);
+            modelBuilder.Entity<CategoryVariable>()
+                .HasOne(cv => cv.Category)
+                .WithMany(c => c.Variables)
+                .HasForeignKey(cv => cv.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
         }
     }
