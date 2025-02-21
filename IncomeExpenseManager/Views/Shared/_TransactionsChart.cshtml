@@ -1,0 +1,90 @@
+﻿@model IncomeExpenseManager.ViewModels.TransactionsViewModel
+
+<canvas id="transactionsChart"></canvas>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function()
+    {
+		var ctx = document.getElementById('transactionsChart').getContext('2d');
+
+        var transactions = @Html.Raw(Json.Serialize(Model.Transactions.Select(t => new 
+            {
+                date = t.Date.ToString("dd-MM-yyyy"),
+                amount = t.Amount,
+                type = t is IncomeExpenseManager.Models.Income ? "Income" : "Expense",
+			    category = t.Category?.Name ?? "Uncategorized"
+        })));
+
+        console.log("Transactions Data:", transactions);
+
+
+        var groupedData = {};
+        transactions.forEach(t => 
+        {
+			let transactionDate = t.date;
+
+            if (!groupedData[transactionDate])
+            {
+                groupedData[transactionDate] = { Income: 0, Expense: 0};
+            }
+            if (t.type === "Income")
+            {
+                groupedData[transactionDate].Income += t.amount;
+            }
+            else
+            {
+                groupedData[transactionDate].Expense += t.amount;
+            }
+        });
+
+            // I Hate the American Date Standart!
+            var labels = Object.keys(groupedData).sort((a, b) => {
+                let dateA = a.split('-').reverse().join('-'); // Convert "dd-MM-yyyy" to "yyyy-MM-dd"
+                let dateB = b.split('-').reverse().join('-');
+                return new Date(dateA) - new Date(dateB); // Proper date comparison
+            });
+
+
+        var incomeData = labels.map(date => groupedData[date].Income || 0);
+        var expenseData = labels.map(date => groupedData[date].Expense || 0);
+
+        var chartData = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Income',
+                    data: incomeData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Expense',
+                    data: expenseData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        }
+        console.log("Grouped Data:", groupedData);
+        console.log("Labels (Dates):", labels);
+        console.log("Income Data:", incomeData);
+        console.log("Expense Data:", expenseData);
+
+        var transactionsChart = new Chart(ctx, 
+        {
+			type: 'bar',
+			data: chartData,
+			options: 
+            {
+				responsive: true,
+                scales:
+                {
+					y: {beginAtZero: true}
+                }
+		    }
+        });
+
+	});
+</script>

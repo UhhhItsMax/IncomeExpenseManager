@@ -83,6 +83,9 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CurrentBalance")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 

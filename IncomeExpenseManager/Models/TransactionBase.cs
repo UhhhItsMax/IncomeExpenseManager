@@ -30,6 +30,7 @@ namespace IncomeExpenseManager.Models
 
         [ForeignKey("CategoryId")]
         public Category? Category { get; set; }
+        public int CurrentBalance { get; set; }
 
     }
 }

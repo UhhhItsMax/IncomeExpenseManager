@@ -10,5 +10,7 @@ namespace IncomeExpenseManager.ViewModels
         public decimal TotalIncome { get; set; }
         public decimal TotalExpense { get; set; }
         public decimal TotalBalance { get; set; }
+        public string YearSearch { get; set; }
+        public string MonthSearch { get; set; }
     }
 }

@@ -13,8 +13,19 @@
     <a asp-controller="Expense" asp-action="Create" class="btn btn-primary">Add Expense</a>
 </p>
 
+
+
 <!-- Filtering/Sorting Form -->
 <form method="get" class="mb-3">
+
+    <!-- Year Search String -->
+    <label for="yearSearch">Year Search:</label>
+    <input type="text" id="yearSearch" name="yearSearch" placeholder="2025" />
+
+    <!-- Month Search String -->
+    <label for="monthSearch">Month Search:</label>
+    <input type="text" id="monthSearch" name="monthSearch" placeholder="2" />
+
     <!-- Type Filter Dropdown -->
     <label for="typeFilter">Transaction Type:</label>
     <select id="typeFilter" name="typeFilter">
@@ -39,6 +50,11 @@
 
     <button type="submit">Apply</button>
 </form>
+
+<!-- Chart -->
+@await Html.PartialAsync("_TransactionsChart")
+
+
 @if (Model != null && Model.Transactions != null && Model.Transactions.Any())
 {
     <table class="table table-striped">

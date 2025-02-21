@@ -43,7 +43,6 @@ namespace IncomeExpenseManager.Data
                 .HasForeignKey(cv => cv.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
         }
     }
 }

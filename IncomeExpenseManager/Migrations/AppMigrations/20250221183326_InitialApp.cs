@@ -59,6 +59,7 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
                     IsRecurring = table.Column<bool>(type: "bit", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: true),
+                    CurrentBalance = table.Column<int>(type: "int", nullable: false),
                     TransactionType = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     Vendor = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Source = table.Column<string>(type: "nvarchar(max)", nullable: true)

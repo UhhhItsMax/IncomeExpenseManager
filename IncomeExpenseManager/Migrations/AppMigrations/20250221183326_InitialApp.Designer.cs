@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IncomeExpenseManager.Migrations.AppMigrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250123015258_InitialApp")]
+    [Migration("20250221183326_InitialApp")]
     partial class InitialApp
     {
         /// <inheritdoc />
@@ -84,6 +84,9 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CurrentBalance")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")

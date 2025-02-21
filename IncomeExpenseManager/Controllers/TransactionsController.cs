@@ -22,6 +22,8 @@ namespace IncomeExpenseManager.Controllers
 
         // GET: Transactions
         public async Task<IActionResult> Index(
+            string yearSearch,
+            string monthSearch,
             string typeFilter,
             string sortOrder,
             string searchString)
@@ -32,6 +34,8 @@ namespace IncomeExpenseManager.Controllers
             var transactionsQuery = _domainContext.Transactions
                 .Include(t => t.Category)
                 .Where(t => t.UserId == userId)
+                .Where(t => t.Date.Year.ToString() == yearSearch || string.IsNullOrEmpty(yearSearch))
+                .Where(t => t.Date.Month.ToString() == monthSearch || string.IsNullOrEmpty(monthSearch))
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(typeFilter))
@@ -79,7 +83,9 @@ namespace IncomeExpenseManager.Controllers
                 Transactions = transactions,
                 TotalIncome = totalIncome,
                 TotalExpense = totalExpense,
-                TotalBalance = totalBalance
+                TotalBalance = totalBalance,
+                YearSearch = yearSearch,
+                MonthSearch = monthSearch
             };
 
 
