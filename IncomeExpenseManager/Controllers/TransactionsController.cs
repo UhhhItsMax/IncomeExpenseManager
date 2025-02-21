@@ -4,17 +4,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using IncomeExpenseManager.ViewModels;
-
-
+using IncomeExpenseManager.Models;
 
 namespace IncomeExpenseManager.Controllers
 {
     public class TransactionsController : Controller
     {
         private readonly ApplicationDbContext _domainContext;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TransactionsController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager)
+        public TransactionsController(ApplicationDbContext domainContext, UserManager<ApplicationUser> userManager)
         {
             _domainContext = domainContext;
             _userManager = userManager;

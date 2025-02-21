@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using IncomeExpenseManager.Models;
 
 namespace IncomeExpenseManager.Controllers
 {
@@ -18,11 +19,11 @@ namespace IncomeExpenseManager.Controllers
     public class ExpenseController : Controller
     {
         private readonly ApplicationDbContext _domainContext;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ExpenseController> _logger;
 
 
-        public ExpenseController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager, ILogger<ExpenseController> logger)
+        public ExpenseController(ApplicationDbContext domainContext, UserManager<ApplicationUser> userManager, ILogger<ExpenseController> logger)
         {
 
             _domainContext = domainContext;

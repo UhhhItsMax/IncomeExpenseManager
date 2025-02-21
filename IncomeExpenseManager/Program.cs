@@ -1,9 +1,11 @@
 using IncomeExpenseManager.Data;
+using IncomeExpenseManager.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Globalization;
+using IncomeExpenseManager.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +29,7 @@ builder.Services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("IdentityConnection")));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     // Configure password or lockout settings
     options.Password.RequireDigit = false;
