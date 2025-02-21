@@ -10,6 +10,7 @@ using IncomeExpenseManager.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using IncomeExpenseManager.Models;
 
 
 namespace IncomeExpenseManager.Controllers
@@ -19,10 +20,10 @@ namespace IncomeExpenseManager.Controllers
     public class IncomeController : Controller
     {
         private readonly ApplicationDbContext _domainContext;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ExpenseController> _logger;
 
-        public IncomeController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager, ILogger<ExpenseController> logger)
+        public IncomeController(ApplicationDbContext domainContext, UserManager<ApplicationUser> userManager, ILogger<ExpenseController> logger)
         {
             _domainContext = domainContext;
             _userManager = userManager;

@@ -10,6 +10,7 @@ using IncomeExpenseManager.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using IncomeExpenseManager.ViewModels;
+using IncomeExpenseManager.Models;
 
 namespace IncomeExpenseManager.Controllers
 {
@@ -17,10 +18,10 @@ namespace IncomeExpenseManager.Controllers
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _domainContext;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
 
-        public CategoriesController(ApplicationDbContext domainContext, UserManager<IdentityUser> userManager)
+        public CategoriesController(ApplicationDbContext domainContext, UserManager<ApplicationUser> userManager)
         {
             _domainContext = domainContext;
             _userManager = userManager;
