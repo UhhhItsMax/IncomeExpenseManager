@@ -1,27 +1,28 @@
-
 # IncomeExpenseManager
 
-IncomeExpenseManager is a web application designed to help users efficiently track and manage their incomes and expenses. By categorizing transactions and providing insightful summaries, it enables users to maintain a clear overview of their financial activities.
+IncomeExpenseManager is a web application designed to help users efficiently track and manage their incomes, expenses, and bank accounts. With features like categorized transactions, insightful summaries, and visual charts, it provides users with a comprehensive view of their financial activities.
 
 ## Features
 
-- **User Authentication**: Secure user registration and login functionalities to ensure personalized data management.
-- **Transaction Management**: Add, edit, and delete income and expense entries with ease.
+- **User Authentication**: Secure user registration and login functionalities using ASP.NET Identity.
+- **Transaction Management**: Add, edit, and delete income and expense entries.
+- **Bank Account Management**: Track multiple bank accounts and associate transactions with them.
 - **Category Management**: Create and manage custom categories for better organization of transactions.
+- **Data Visualization**: View financial summaries through charts for better insights.
 - **Data Persistence**: All data is stored in a SQL Server database, ensuring reliability and consistency.
 
 ## Technologies Used
 
-- **ASP.NET Core**: Serves as the primary framework for building the web application.
-- **Entity Framework Core**: Facilitates database interactions using the code-first approach.
-- **SQL Server**: Acts as the relational database management system for storing application data.
-- **Bootstrap**: Provides responsive design elements for an enhanced user interface.
+- **ASP.NET Core (.NET 9.0)**: Modern framework for building scalable web applications.
+- **Entity Framework Core**: Code-first database management for efficient development.
+- **SQL Server**: Robust relational database system for storing application data.
+- **Bootstrap**: Provides responsive design elements for an enhanced user experience.
 
 ## Getting Started
 
 ### Prerequisites
 
-- [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
+- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) (or any preferred C# IDE)
 
@@ -68,8 +69,10 @@ IncomeExpenseManager is a web application designed to help users efficiently tra
 
 - **Register a New Account**: Sign up to create a personalized account.
 - **Log In**: Access your account using your credentials.
-- **Manage Transactions**: Add new income or expense entries, assign them to categories, and view your transaction history.
-- **Manage Categories**: Create, edit, or delete categories to organize your transactions effectively.
+- **Manage Bank Accounts**: Add and track multiple bank accounts.
+- **Manage Transactions**: Add, edit, or delete income and expense entries.
+- **Manage Categories**: Create, edit, or delete categories for better financial organization.
+- **View Financial Charts**: Visualize transaction history with charts for better insights.
 
 ## Contributing
 
@@ -81,4 +84,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE.txt) f
 
 ---
 
-*Note: This README provides a comprehensive overview of the IncomeExpenseManager application, including setup instructions and usage guidelines.*
+*Note: This README provides an updated overview of the IncomeExpenseManager application, including newly added features such as bank account management and financial visualization charts.*
+
