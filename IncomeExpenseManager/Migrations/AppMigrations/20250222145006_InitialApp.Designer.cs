@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IncomeExpenseManager.Migrations.AppMigrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250221230046_InitialApp")]
+    [Migration("20250222145006_InitialApp")]
     partial class InitialApp
     {
         /// <inheritdoc />
@@ -24,6 +24,31 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("IncomeExpenseManager.Models.BankAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("CurrentBalance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BankAccounts");
+                });
 
             modelBuilder.Entity("IncomeExpenseManager.Models.Category", b =>
                 {
@@ -82,6 +107,9 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("BankAccountId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");

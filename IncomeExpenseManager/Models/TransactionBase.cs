@@ -32,5 +32,7 @@ namespace IncomeExpenseManager.Models
         public Category? Category { get; set; }
         public int CurrentBalance { get; set; }
 
+        public int? BankAccountId { get; set; }
+
     }
 }

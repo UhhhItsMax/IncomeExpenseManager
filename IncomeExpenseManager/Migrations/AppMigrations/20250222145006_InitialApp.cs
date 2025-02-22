@@ -12,6 +12,21 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "BankAccounts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CurrentBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BankAccounts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -60,6 +75,7 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: true),
                     CurrentBalance = table.Column<int>(type: "int", nullable: false),
+                    BankAccountId = table.Column<int>(type: "int", nullable: true),
                     TransactionType = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     Vendor = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Source = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -76,6 +92,11 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_BankAccounts_UserId",
+                table: "BankAccounts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CategoryVariables_CategoryId",
                 table: "CategoryVariables",
                 column: "CategoryId");
@@ -89,6 +110,9 @@ namespace IncomeExpenseManager.Migrations.AppMigrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "BankAccounts");
+
             migrationBuilder.DropTable(
                 name: "CategoryVariables");
 

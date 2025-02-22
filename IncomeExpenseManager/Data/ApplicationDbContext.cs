@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using Microsoft.AspNetCore.Identity;
+using IncomeExpenseManager.Models;
 
 
 namespace IncomeExpenseManager.Data
@@ -20,6 +21,7 @@ namespace IncomeExpenseManager.Data
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CategoryVariable> CategoryVariables { get; set; }
+        public DbSet<BankAccount> BankAccounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +45,8 @@ namespace IncomeExpenseManager.Data
                 .HasForeignKey(cv => cv.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<BankAccount>()
+                .HasIndex(b => b.UserId);
         }
     }
 }
